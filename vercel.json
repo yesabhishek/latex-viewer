@@ -1,12 +1,12 @@
 {
   "buildCommand": "npm run build",
   "devCommand": "vite --host 127.0.0.1 --port $PORT",
-  "installCommand": "npm install --include=optional && npm install @node-latex-compiler/bin-linux-x64@1.0.5 --no-save --force && node scripts/install-vercel-libs.mjs",
+  "installCommand": "npm install --include=optional && node scripts/install-vercel-tectonic.mjs",
   "outputDirectory": "dist",
   "framework": "vite",
   "functions": {
     "api/compile.ts": {
-      "includeFiles": "{node_modules/@node-latex-compiler/bin-linux-x64/**,vendor/lib/**}",
+      "includeFiles": "vendor/bin/**",
       "maxDuration": 60
     }
   }

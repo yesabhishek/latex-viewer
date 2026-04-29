@@ -65,7 +65,7 @@ export async function compileLatexSource(source: string): Promise<CompileResult>
     return { error: "LaTeX source is too large for this lightweight compiler.", ok: false, status: 413 };
   }
 
-  const tectonicPath = platformResolver.resolveTectonicExecutable({});
+  const tectonicPath = resolveTectonicPath();
   if (!tectonicPath) {
     return { error: "Tectonic compiler binary is not available.", ok: false, status: 500 };
   }
@@ -151,6 +151,21 @@ function buildLibraryPath() {
   ]
     .filter(Boolean)
     .join(":");
+}
+
+function resolveTectonicPath() {
+  const vendoredTectonicPath = path.join(process.cwd(), "vendor", "bin", "tectonic");
+  const vercelTectonicPath = "/var/task/vendor/bin/tectonic";
+
+  if (process.platform === "linux") {
+    return (
+      platformResolver.resolveTectonicExecutable({ tectonicPath: vendoredTectonicPath }) ??
+      platformResolver.resolveTectonicExecutable({ tectonicPath: vercelTectonicPath }) ??
+      platformResolver.resolveTectonicExecutable({})
+    );
+  }
+
+  return platformResolver.resolveTectonicExecutable({});
 }
 
 function normalizeSourceForCompiler(source: string) {
