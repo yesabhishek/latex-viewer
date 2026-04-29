@@ -45,7 +45,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const source = readSource(req.body as CompileBody | string | undefined);
   const result = await compileLatexSource(source);
 
-  if (!result.ok) {
+  if (result.ok === false) {
     return res.status(result.status).json({ error: result.error, log: result.log });
   }
 
