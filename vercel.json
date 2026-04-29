@@ -6,6 +6,7 @@
   "framework": "vite",
   "functions": {
     "api/compile.ts": {
+      "includeFiles": "node_modules/@node-latex-compiler/bin-linux-x64/**",
       "maxDuration": 60
     }
   }
