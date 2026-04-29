@@ -1,0 +1,25 @@
+{
+  "name": "latex-viewer",
+  "version": "0.1.0",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:vercel": "npx vercel dev --listen 127.0.0.1:5173 --yes",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^6.0.1",
+    "node-latex-compiler": "^1.0.5",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "vite": "^8.0.10"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@vercel/node": "^5.7.13",
+    "typescript": "^6.0.3"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "buildCommand": "npm run build",
+  "devCommand": "vite --host 127.0.0.1 --port $PORT",
+  "outputDirectory": "dist",
+  "framework": "vite",
+  "functions": {
+    "api/compile.ts": {
+      "maxDuration": 60
+    }
+  }
+}
