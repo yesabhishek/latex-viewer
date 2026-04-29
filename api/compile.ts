@@ -124,6 +124,7 @@ function runTectonic(tectonicPath: string, texPath: string, outDir: string) {
         env: {
           ...process.env,
           HOME: tmpdir(),
+          LD_LIBRARY_PATH: buildLibraryPath(),
           XDG_CACHE_HOME: path.join(tmpdir(), "tectonic-cache"),
         },
         timeout: COMPILE_TIMEOUT_MS,
@@ -140,6 +141,16 @@ function runTectonic(tectonicPath: string, texPath: string, outDir: string) {
 
     child.stdin?.end();
   });
+}
+
+function buildLibraryPath() {
+  return [
+    path.join(process.cwd(), "vendor", "lib"),
+    "/var/task/vendor/lib",
+    process.env.LD_LIBRARY_PATH,
+  ]
+    .filter(Boolean)
+    .join(":");
 }
 
 function normalizeSourceForCompiler(source: string) {
