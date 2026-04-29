@@ -1,6 +1,7 @@
 {
   "buildCommand": "npm run build",
   "devCommand": "vite --host 127.0.0.1 --port $PORT",
+  "installCommand": "npm install --include=optional",
   "outputDirectory": "dist",
   "framework": "vite",
   "functions": {
