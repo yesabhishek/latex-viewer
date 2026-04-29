@@ -1,7 +1,7 @@
 {
   "buildCommand": "npm run build",
   "devCommand": "vite --host 127.0.0.1 --port $PORT",
-  "installCommand": "npm install --include=optional",
+  "installCommand": "npm install --include=optional && npm install @node-latex-compiler/bin-linux-x64@1.0.5 --no-save --force",
   "outputDirectory": "dist",
   "framework": "vite",
   "functions": {
