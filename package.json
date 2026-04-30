@@ -1,7 +1,20 @@
 {
   "name": "latex-viewer",
   "version": "0.1.0",
+  "description": "Free online LaTeX editor and PDF previewer with server-side Tectonic compilation.",
+  "homepage": "https://latex-viewer-alpha.vercel.app/",
   "license": "MIT",
+  "keywords": [
+    "latex",
+    "tex",
+    "pdf",
+    "editor",
+    "previewer",
+    "compiler",
+    "tectonic",
+    "react",
+    "vite"
+  ],
   "type": "module",
   "scripts": {
     "dev": "vite",

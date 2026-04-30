@@ -1,0 +1,11 @@
+{
+  "name": "LaTeX Viewer",
+  "short_name": "LaTeX Viewer",
+  "description": "Free online LaTeX editor and PDF previewer with Tectonic compilation.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8f2e8",
+  "theme_color": "#f8f2e8",
+  "categories": ["developer", "education", "productivity"],
+  "lang": "en-US"
+}

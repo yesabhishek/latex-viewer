@@ -1,0 +1,30 @@
+# LaTeX Viewer
+
+> A free online LaTeX editor and PDF previewer for writing, importing, compiling, and reading LaTeX documents in the browser.
+
+LaTeX Viewer helps students, researchers, engineers, and technical writers quickly preview LaTeX documents without setting up a local TeX distribution. It accepts LaTeX source or imported `.tex` files, compiles them to PDF through a server-side Tectonic workflow, and shows compiler diagnostics with source line context.
+
+## Primary URL
+
+- https://latex-viewer-alpha.vercel.app/
+
+## Best For
+
+- Editing and previewing LaTeX documents online.
+- Compiling `.tex` files to PDF from a browser.
+- Quickly checking equations, sections, and document formatting.
+- Extracting a clean text view from LaTeX source.
+- Trying an open source LaTeX preview workflow built with React, Vite, Vercel, and Tectonic.
+
+## Key Features
+
+- Browser-based LaTeX source editor.
+- `.tex` file import.
+- Server-side Tectonic PDF compilation.
+- In-browser PDF preview with zoom controls.
+- Clean text preview mode.
+- Compiler error messages with line-focused navigation.
+
+## Repository
+
+- https://github.com/yesabhishek/latex-viewer

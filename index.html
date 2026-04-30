@@ -3,11 +3,81 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f8f2e8" />
+    <meta name="application-name" content="LaTeX Viewer" />
     <meta
       name="description"
-      content="A lightweight, client-side LaTeX editor and previewer."
+      content="LaTeX Viewer is a free online LaTeX editor and PDF previewer with server-side Tectonic compilation, clean text extraction, file import, and instant browser previews."
     />
-    <title>LaTeX Viewer</title>
+    <meta
+      name="keywords"
+      content="LaTeX viewer, online LaTeX editor, LaTeX previewer, PDF compiler, Tectonic LaTeX, TeX editor, Overleaf alternative, LaTeX to PDF"
+    />
+    <meta name="author" content="Abhishek Choudhury" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="googlebot" content="index, follow, max-image-preview:large" />
+    <link rel="canonical" href="https://latex-viewer-alpha.vercel.app/" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="LaTeX Viewer" />
+    <meta property="og:title" content="LaTeX Viewer - Online LaTeX Editor and PDF Previewer" />
+    <meta
+      property="og:description"
+      content="Write, import, compile, and preview LaTeX documents in the browser with a fast Tectonic-powered PDF workflow."
+    />
+    <meta property="og:url" content="https://latex-viewer-alpha.vercel.app/" />
+    <meta property="og:image" content="https://latex-viewer-alpha.vercel.app/og-image.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="LaTeX Viewer app preview showing source editing and PDF output." />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="LaTeX Viewer - Online LaTeX Editor and PDF Previewer" />
+    <meta
+      name="twitter:description"
+      content="A free browser-based LaTeX editor with Tectonic PDF compilation, .tex import, source diagnostics, and text preview."
+    />
+    <meta name="twitter:image" content="https://latex-viewer-alpha.vercel.app/og-image.png" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "LaTeX Viewer",
+        "alternateName": "Online LaTeX Viewer",
+        "url": "https://latex-viewer-alpha.vercel.app/",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Any",
+        "browserRequirements": "Requires a modern browser with JavaScript enabled.",
+        "description": "Free online LaTeX editor and PDF previewer for writing, importing, compiling, and reading LaTeX documents in the browser.",
+        "featureList": [
+          "Edit LaTeX source in the browser",
+          "Import .tex files",
+          "Compile LaTeX to PDF with Tectonic",
+          "Preview compiled PDF output",
+          "Extract clean text from LaTeX source",
+          "Highlight compiler errors with line numbers"
+        ],
+        "isAccessibleForFree": true,
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "creator": {
+          "@type": "Person",
+          "name": "Abhishek Choudhury",
+          "url": "https://github.com/yesabhishek"
+        },
+        "sourceCode": "https://github.com/yesabhishek/latex-viewer",
+        "softwareVersion": "0.1.0"
+      }
+    </script>
+
+    <title>LaTeX Viewer - Online LaTeX Editor and PDF Previewer</title>
   </head>
   <body>
     <div id="root"></div>

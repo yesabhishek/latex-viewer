@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title>LaTeX Viewer</title>
+  <rect width="64" height="64" rx="14" fill="#f8f2e8"/>
+  <path fill="#1d3557" d="M15 18h34v7H36v21h-8V25H15z"/>
+  <path fill="#2a9d8f" d="M38 38h11v8H38z"/>
+</svg>

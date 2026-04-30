@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">LaTeX Viewer</title>
+  <desc id="desc">Social preview for LaTeX Viewer, an online LaTeX editor and PDF previewer.</desc>
+  <rect width="1200" height="630" fill="#f8f2e8"/>
+  <rect x="72" y="72" width="1056" height="486" rx="28" fill="#ffffff" stroke="#d8cfc1" stroke-width="2"/>
+  <rect x="112" y="116" width="464" height="398" rx="16" fill="#1d3557"/>
+  <rect x="624" y="116" width="392" height="398" rx="16" fill="#f4f7fb" stroke="#ccd6e0" stroke-width="2"/>
+  <rect x="656" y="154" width="328" height="26" rx="13" fill="#dfe8f0"/>
+  <rect x="656" y="206" width="272" height="16" rx="8" fill="#9fb2c3"/>
+  <rect x="656" y="238" width="308" height="16" rx="8" fill="#9fb2c3"/>
+  <rect x="656" y="270" width="238" height="16" rx="8" fill="#9fb2c3"/>
+  <rect x="656" y="342" width="180" height="18" rx="9" fill="#2a9d8f"/>
+  <rect x="656" y="382" width="260" height="16" rx="8" fill="#9fb2c3"/>
+  <rect x="656" y="414" width="292" height="16" rx="8" fill="#9fb2c3"/>
+  <text x="152" y="192" fill="#f8f2e8" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700">LaTeX Viewer</text>
+  <text x="152" y="256" fill="#c9d8e8" font-family="Arial, Helvetica, sans-serif" font-size="25">Write, compile, and preview</text>
+  <text x="152" y="294" fill="#c9d8e8" font-family="Arial, Helvetica, sans-serif" font-size="25">LaTeX documents online.</text>
+  <text x="152" y="382" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="30">\int_0^1 x^2 dx = 1/3</text>
+  <rect x="152" y="432" width="178" height="44" rx="22" fill="#2a9d8f"/>
+  <text x="178" y="463" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700">Free to use</text>
+</svg>
