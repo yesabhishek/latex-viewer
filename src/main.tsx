@@ -2,12 +2,13 @@ import { StrictMode, useCallback, useEffect, useMemo, useRef, useState } from "r
 import { createRoot } from "react-dom/client";
 import "./styles.css";
 
-type PreviewMode = "pdf" | "text";
+type PreviewMode = "pdf" | "text" | "markdown";
 type CompileState = "idle" | "compiling" | "success" | "error";
 type CompileIssue = {
   line: number | null;
   message: string;
 };
+type CopyState = "idle" | "copied" | "error";
 
 const starterLatex = String.raw`\documentclass{article}
 \title{A Tiny LaTeX Preview}
@@ -33,11 +34,13 @@ This app compiles with Tectonic on a Vercel serverless function, so packages and
 function App() {
   const [sourceLatex, setSourceLatex] = useState(starterLatex);
   const [plainText, setPlainText] = useState(() => extractCleanText(starterLatex));
+  const [markdownText, setMarkdownText] = useState(() => extractCleanMarkdown(starterLatex));
   const [pdfUrl, setPdfUrl] = useState("");
   const [compileState, setCompileState] = useState<CompileState>("idle");
   const [compileError, setCompileError] = useState("");
   const [isErrorToastDismissed, setIsErrorToastDismissed] = useState(false);
   const [previewMode, setPreviewMode] = useState<PreviewMode>("pdf");
+  const [copyState, setCopyState] = useState<CopyState>("idle");
   const [zoom, setZoom] = useState(1);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -101,6 +104,7 @@ function App() {
 
   useEffect(() => {
     setPlainText(extractCleanText(sourceLatex));
+    setMarkdownText(extractCleanMarkdown(sourceLatex));
     const timer = window.setTimeout(() => {
       void compileSource(sourceLatex);
     }, 450);
@@ -122,9 +126,35 @@ function App() {
   const lineNumbers = useMemo(() => createLineNumbers(sourceLatex), [sourceLatex]);
   const shouldShowSourceIssue = compileState === "error" && Boolean(compileError);
   const shouldShowErrorToast = shouldShowSourceIssue && !isErrorToastDismissed;
+  const copyPayload = previewMode === "markdown" ? markdownText : previewMode === "text" ? plainText : "";
+  const copyLabel =
+    copyState === "copied"
+      ? "Copied"
+      : copyState === "error"
+        ? "Copy failed"
+        : previewMode === "markdown"
+          ? "Copy Markdown"
+          : previewMode === "text"
+            ? "Copy Text"
+            : "Copy";
 
   function updateZoom(nextZoom: number) {
     setZoom(Math.min(2, Math.max(0.55, Number(nextZoom.toFixed(2)))));
+  }
+
+  async function copyPreview() {
+    if (!copyPayload) {
+      return;
+    }
+
+    try {
+      await copyTextToClipboard(copyPayload);
+      setCopyState("copied");
+      window.setTimeout(() => setCopyState("idle"), 1600);
+    } catch {
+      setCopyState("error");
+      window.setTimeout(() => setCopyState("idle"), 1800);
+    }
   }
 
   function focusIssueLine() {
@@ -185,7 +215,10 @@ function App() {
             <button
               type="button"
               className={previewMode === "pdf" ? "is-active" : ""}
-              onClick={() => setPreviewMode("pdf")}
+              onClick={() => {
+                setPreviewMode("pdf");
+                setCopyState("idle");
+              }}
               aria-selected={previewMode === "pdf"}
               role="tab"
             >
@@ -194,13 +227,38 @@ function App() {
             <button
               type="button"
               className={previewMode === "text" ? "is-active" : ""}
-              onClick={() => setPreviewMode("text")}
+              onClick={() => {
+                setPreviewMode("text");
+                setCopyState("idle");
+              }}
               aria-selected={previewMode === "text"}
               role="tab"
             >
               Text
             </button>
+            <button
+              type="button"
+              className={previewMode === "markdown" ? "is-active" : ""}
+              onClick={() => {
+                setPreviewMode("markdown");
+                setCopyState("idle");
+              }}
+              aria-selected={previewMode === "markdown"}
+              role="tab"
+            >
+              Markdown
+            </button>
           </div>
+
+          <button
+            type="button"
+            onClick={() => void copyPreview()}
+            disabled={!copyPayload}
+            aria-live="polite"
+            title={copyPayload ? "Copy the current preview text" : "Switch to Text or Markdown to copy"}
+          >
+            {copyLabel}
+          </button>
 
           <div className="zoom-controls" aria-label="Zoom controls">
             <button type="button" onClick={() => updateZoom(zoom - 0.1)} aria-label="Zoom out">
@@ -290,6 +348,10 @@ function App() {
           <div className="preview-scroll">
             {previewMode === "pdf" ? (
               <PdfPreview state={compileState} pdfUrl={pdfUrl} zoom={zoom} />
+            ) : previewMode === "markdown" ? (
+              <pre className="text-preview markdown-preview" style={{ fontSize: `${zoom}rem` }}>
+                {markdownText}
+              </pre>
             ) : (
               <pre className="text-preview" style={{ fontSize: `${zoom}rem` }}>
                 {plainText}
@@ -373,6 +435,29 @@ async function readCompileError(response: Response) {
   return (await response.text()) || "LaTeX compilation failed.";
 }
 
+async function copyTextToClipboard(text: string) {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.setAttribute("readonly", "");
+  textarea.style.position = "fixed";
+  textarea.style.left = "-9999px";
+  document.body.appendChild(textarea);
+  textarea.select();
+
+  try {
+    if (!document.execCommand("copy")) {
+      throw new Error("Copy command failed.");
+    }
+  } finally {
+    document.body.removeChild(textarea);
+  }
+}
+
 function extractCleanText(source: string) {
   return normalizeTextLatex(extractDocumentBody(stripComments(source)))
     .replace(/\\documentclass(?:\[[^\]]*])?\{[^}]*}/g, "")
@@ -391,6 +476,34 @@ function extractCleanText(source: string) {
     .replace(/\$([^$\n]*)\$/g, "$1")
     .replace(/\\frac\{([^}]*)}\{([^}]*)}/g, "$1/$2")
     .replace(/\\(pi|alpha|beta|gamma|delta|theta|lambda|mu|sigma|omega)\b/g, "$1")
+    .replace(/\\[a-zA-Z]+(?:\[[^\]]*])?/g, "")
+    .replace(/[{}]/g, "")
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+function extractCleanMarkdown(source: string) {
+  return normalizeMarkdownLatex(extractDocumentBody(stripComments(source)))
+    .replace(/\\documentclass(?:\[[^\]]*])?\{[^}]*}/g, "")
+    .replace(/\\usepackage(?:\[[^\]]*])?\{[^}]*}/g, "")
+    .replace(/\\begin\{document}/g, "")
+    .replace(/\\end\{document}/g, "")
+    .replace(/\\maketitle/g, "")
+    .replace(/\\title\{([^}]*)}/g, "# $1\n")
+    .replace(/\\author\{([^}]*)}/g, "_$1_\n")
+    .replace(/\\date\{\\today}/g, new Date().toLocaleDateString(undefined, { dateStyle: "long" }))
+    .replace(/\\date\{([^}]*)}/g, "$1\n")
+    .replace(/\\part\*?\{([^}]*)}/g, "\n# $1\n")
+    .replace(/\\chapter\*?\{([^}]*)}/g, "\n# $1\n")
+    .replace(/\\section\*?\{([^}]*)}/g, "\n## $1\n")
+    .replace(/\\subsection\*?\{([^}]*)}/g, "\n### $1\n")
+    .replace(/\\subsubsection\*?\{([^}]*)}/g, "\n#### $1\n")
+    .replace(/\\\[((?:.|\n)*?)\\\]/g, "\n\n$$\n$1\n$$\n")
+    .replace(/\\\(((?:.|\n)*?)\\\)/g, (_match, math: string) => `$${math}$`)
+    .replace(/\$\$((?:.|\n)*?)\$\$/g, "\n\n$$\n$1\n$$\n")
+    .replace(/\\begin\{equation\*?}((?:.|\n)*?)\\end\{equation\*?}/g, "\n\n$$\n$1\n$$\n")
+    .replace(/\\begin\{align\*?}((?:.|\n)*?)\\end\{align\*?}/g, "\n\n$$\n$1\n$$\n")
     .replace(/\\[a-zA-Z]+(?:\[[^\]]*])?/g, "")
     .replace(/[{}]/g, "")
     .replace(/[ \t]+\n/g, "\n")
@@ -474,6 +587,33 @@ function normalizeTextLatex(source: string) {
     .replace(/\\end\{center}/g, "")
     .replace(/\\begin\{itemize}(?:\[[^\]]*])?/g, "\n")
     .replace(/\\end\{itemize}/g, "\n")
+    .replace(/\\item\b/g, "\n- ")
+    .replace(/\\\\/g, "\n");
+}
+
+function normalizeMarkdownLatex(source: string) {
+  let result = source;
+  result = replaceLatexCommand(result, "href", 2, ([url, label]) => `[${label}](${url})`);
+  result = replaceLatexCommand(result, "textbf", 1, ([label]) => `**${label}**`);
+  result = replaceLatexCommand(result, "textit", 1, ([label]) => `*${label}*`);
+  result = replaceLatexCommand(result, "emph", 1, ([label]) => `*${label}*`);
+  result = replaceLatexCommand(result, "underline", 1, ([label]) => label);
+
+  return result
+    .replace(/\\fa[A-Za-z]+\b/g, "")
+    .replace(/\\&/g, "&")
+    .replace(/\\%/g, "%")
+    .replace(/\\_/g, "_")
+    .replace(/\\#/g, "#")
+    .replace(/\\quad/g, " ")
+    .replace(/\\hfill/g, " ")
+    .replace(/\\vspace\*?\{[^}]*}/g, "")
+    .replace(/\\begin\{center}/g, "")
+    .replace(/\\end\{center}/g, "")
+    .replace(/\\begin\{itemize}(?:\[[^\]]*])?/g, "\n")
+    .replace(/\\begin\{enumerate}(?:\[[^\]]*])?/g, "\n")
+    .replace(/\\end\{itemize}/g, "\n")
+    .replace(/\\end\{enumerate}/g, "\n")
     .replace(/\\item\b/g, "\n- ")
     .replace(/\\\\/g, "\n");
 }

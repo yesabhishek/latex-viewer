@@ -44,6 +44,16 @@ button:hover {
   border-color: #000000;
 }
 
+button:disabled {
+  border-color: #e2e2e2;
+  color: #9a9a9a;
+  cursor: not-allowed;
+}
+
+button:disabled:hover {
+  border-color: #e2e2e2;
+}
+
 .button-primary {
   background: #000000;
   border-color: #000000;
@@ -65,7 +75,9 @@ textarea:focus-visible {
   display: grid;
   grid-template-rows: auto 1fr;
   gap: 8px;
+  min-width: 0;
   min-height: 100vh;
+  overflow-x: hidden;
   padding: 8px;
   position: relative;
 }
@@ -76,6 +88,7 @@ textarea:focus-visible {
   justify-content: space-between;
   gap: 12px;
   min-height: 40px;
+  min-width: 0;
   border: 1px solid #e5e5e5;
   border-radius: 8px;
   background: #ffffff;
@@ -139,6 +152,7 @@ textarea:focus-visible {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 8px;
+  min-width: 0;
   min-height: 0;
   position: relative;
 }
@@ -163,6 +177,7 @@ textarea:focus-visible {
 .pane {
   display: grid;
   grid-template-rows: auto 1fr;
+  min-width: 0;
   min-height: 0;
   overflow: hidden;
   border: 1px solid #e5e5e5;
@@ -289,6 +304,7 @@ textarea {
   border: 1px solid #dcdcdc;
   border-radius: 7px;
   display: flex;
+  min-width: 0;
   padding: 2px;
 }
 
@@ -297,6 +313,7 @@ textarea {
   border: 0;
   border-radius: 5px;
   height: 26px;
+  min-width: 0;
   padding: 0 9px;
 }
 
@@ -355,6 +372,10 @@ textarea {
   line-height: 1.6;
   padding: 32px;
   white-space: pre-wrap;
+}
+
+.markdown-preview {
+  background: #fcfcfc;
 }
 
 .error-panel {
@@ -446,6 +467,7 @@ textarea {
   .topbar {
     align-items: flex-start;
     flex-direction: column;
+    overflow: hidden;
   }
 
   .workspace {
@@ -469,6 +491,7 @@ textarea {
   .topbar-actions {
     align-items: stretch;
     flex-direction: column;
+    min-width: 0;
     width: 100%;
   }
 
@@ -493,6 +516,10 @@ textarea {
   .segmented-control button,
   .zoom-controls button {
     flex: 1;
+  }
+
+  .segmented-control button {
+    padding: 0 6px;
   }
 
   .pane-header {
