@@ -213,6 +213,12 @@ function remember(key: string, pdf: Buffer) {
   }
 }
 
+// The serverless image has no fontconfig setup; Tectonic warns about it on every run.
 function compactLog(log: string) {
-  return log.split("\n").slice(-80).join("\n").trim();
+  return log
+    .split("\n")
+    .filter((line) => !line.startsWith("Fontconfig error"))
+    .slice(-80)
+    .join("\n")
+    .trim();
 }
