@@ -1,43 +1,62 @@
 # LaTeX Viewer
 
-A lightweight LaTeX editor and PDF viewer built with Vite, React, and a Vercel serverless Tectonic compiler.
+A fast, focused LaTeX editor with a live PDF preview. Write or drop in a `.tex` file, and the PDF rebuilds a moment after you stop typing.
 
-The app has no auth, database, uploads, or stored user content. LaTeX is posted only to `/api/compile` for the current compile request and the temporary files are deleted after the PDF is returned.
+Live at [latex-viewer-alpha.vercel.app](https://latex-viewer-alpha.vercel.app/).
 
-## Run Locally
+## Features
+
+- **Editor** built on CodeMirror 6: LaTeX highlighting, command and environment autocomplete, bracket matching, search, and multi-cursor editing.
+- **Live PDF preview** rendered with pdf.js. Recompiles keep your scroll position, text is selectable, and links are clickable.
+- **Errors in place.** Compiler errors underline the failing line, open a Problems panel with the full log, and keep the last good PDF on screen.
+- **Instant repeats.** Builds are cached by content in the browser and on the server, so undo, redo, and unchanged recompiles return immediately.
+- **Text and Markdown views** extract clean output from the source for copying elsewhere. Markdown keeps math as `$...$` and `$$...$$`.
+- **Command palette** (`Cmd+K` or `Ctrl+K`) for every action, plus `Cmd+S` to compile and `Cmd+O` to open a file.
+- Resizable split, light and dark themes, a phone layout, and your work saved in this browser.
+
+## Keyboard
+
+| Action                | Shortcut                     |
+| --------------------- | ---------------------------- |
+| Command palette       | `Cmd+K` or `Cmd+Shift+P`     |
+| Compile now           | `Cmd+S` or `Cmd+Enter`       |
+| Open a .tex file      | `Cmd+O`                      |
+| Find in source        | `Cmd+F`                      |
+| Zoom the PDF          | `Ctrl` or `Cmd` + scroll     |
+
+Use `Ctrl` in place of `Cmd` on Windows and Linux.
+
+## Run locally
+
+Requires Node.js 20.9 or newer.
 
 ```sh
 npm install
 npm run dev
 ```
 
-Open the local URL Vite prints in the terminal. The Vite dev server includes the same local `/api/compile` middleware used by the Vercel function, so PDF compilation works on `localhost:5173`.
+Open http://localhost:3000. On macOS and Windows, `npm install` brings in a Tectonic binary for your platform through `node-latex-compiler`. You can also point `TECTONIC_PATH` at any Tectonic executable. The first compile downloads TeX packages and takes longer than the rest.
 
-The first compile can be slower while Tectonic warms its package cache.
+## Scripts
 
-## Build
+| Command             | What it does                       |
+| ------------------- | ---------------------------------- |
+| `npm run dev`       | Start the dev server               |
+| `npm run build`     | Production build                   |
+| `npm run start`     | Serve the production build         |
+| `npm run lint`      | ESLint                             |
+| `npm run typecheck` | TypeScript, no emit                |
 
-```sh
-npm run build
-```
+## How it works
 
-The static output is written to `dist/`.
+- `src/app/api/compile/route.ts` accepts `POST` with `{ "source": "..." }` (or a plain text body) and returns `application/pdf`. Failures return JSON with `error` and `log`.
+- `src/lib/server/tectonic.ts` runs Tectonic in a temporary folder, removes it afterwards, and keeps a small in-memory cache of recent PDFs.
+- `src/lib/server/shims.ts` rewrites a few Overleaf and pdfTeX conventions, such as `fontawesome5` and `glyphtounicode`, without shifting line numbers in error messages.
+- Nothing is stored on the server. Your source is saved only in this browser's local storage.
 
 ## Deploy on Vercel
 
-Vercel can deploy the Vite app plus the `/api/compile` serverless function using:
-
-- Build command: `npm run build`
-- Output directory: `dist`
-
-Those settings are also captured in `vercel.json`.
-
-## Notes
-
-- Preview mode `PDF` renders the compiled PDF in-browser.
-- Preview mode `Text` extracts a quick clean-text view from the LaTeX source.
-- Zoom controls affect only the preview pane.
-- The compiler includes a compatibility shim for resume templates that use `fontawesome5` and `glyphtounicode`, both common in Overleaf/pdfTeX templates.
+`vercel.json` sets the framework to Next.js and runs `scripts/install-vercel-tectonic.mjs` after `npm install`, which downloads a static Linux Tectonic build into `vendor/bin`. `next.config.ts` includes that binary in the compile function's output.
 
 ## License
 

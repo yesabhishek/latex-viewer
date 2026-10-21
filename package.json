@@ -1,6 +1,7 @@
 {
   "name": "latex-viewer",
-  "version": "0.1.0",
+  "version": "0.2.0",
+  "private": true,
   "description": "Free online LaTeX editor and PDF previewer with server-side Tectonic compilation.",
   "homepage": "https://latex-viewer-alpha.vercel.app/",
   "license": "MIT",
@@ -12,28 +13,43 @@
     "previewer",
     "compiler",
     "tectonic",
-    "react",
-    "vite"
+    "nextjs"
   ],
-  "type": "module",
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "scripts": {
-    "dev": "vite",
-    "dev:vercel": "npx vercel dev --listen 127.0.0.1:5173 --yes",
-    "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@vitejs/plugin-react": "^6.0.1",
+    "@codemirror/autocomplete": "^6.20.4",
+    "@codemirror/commands": "^6.11.1",
+    "@codemirror/language": "^6.13.1",
+    "@codemirror/legacy-modes": "^6.5.5",
+    "@codemirror/lint": "^6.9.7",
+    "@codemirror/search": "^6.7.2",
+    "@codemirror/state": "^6.7.6",
+    "@codemirror/view": "^6.43.15",
+    "@lezer/highlight": "^1.2.5",
+    "geist": "^1.8.1",
+    "lucide-react": "^1.61.0",
+    "next": "^16.4.2",
     "node-latex-compiler": "^1.0.5",
-    "react": "^19.2.5",
-    "react-dom": "^19.2.5",
-    "vite": "^8.0.10"
+    "pdfjs-dist": "^6.4.299",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
-    "@types/node": "^25.6.0",
-    "@types/react": "^19.2.7",
-    "@types/react-dom": "^19.2.3",
-    "@vercel/node": "^5.7.13",
+    "@types/node": "^26.6.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.4.2",
     "typescript": "^6.0.3"
   }
 }
