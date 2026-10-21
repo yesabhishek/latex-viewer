@@ -56,7 +56,12 @@ Open http://localhost:3000. On macOS and Windows, `npm install` brings in a Tect
 
 ## Deploy on Vercel
 
-`vercel.json` sets the framework to Next.js and runs `scripts/install-vercel-tectonic.mjs` after `npm install`, which downloads a static Linux Tectonic build into `vendor/bin`. `next.config.ts` includes that binary in the compile function's output.
+`vercel.json` sets the framework to Next.js and runs two scripts after `npm install`:
+
+- `scripts/install-vercel-tectonic.mjs` downloads a static Linux Tectonic build into `vendor/bin`.
+- `scripts/warm-tectonic-cache.mjs` compiles a few representative documents so the TeX packages and the LaTeX format file land in `node_modules/.cache/tectonic`. Vercel restores that folder between builds, so only the first build waits on the downloads.
+
+`next.config.ts` includes the binary and the warmed cache in the compile function. On a cold start the function copies the cache into `/tmp`, so the first compile skips most downloads.
 
 ## License
 

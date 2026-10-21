@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
-  "installCommand": "npm install && node scripts/install-vercel-tectonic.mjs",
+  "installCommand": "npm install && node scripts/install-vercel-tectonic.mjs && node scripts/warm-tectonic-cache.mjs",
   "buildCommand": "next build",
   "outputDirectory": ".next"
 }

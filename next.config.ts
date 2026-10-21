@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
   // Resolved at runtime from node_modules so its optional platform binaries stay untouched.
   serverExternalPackages: ["node-latex-compiler"],
   outputFileTracingIncludes: {
-    "/api/compile": ["./vendor/bin/**"],
+    "/api/compile": ["./vendor/bin/**", "./node_modules/.cache/tectonic/**"],
   },
   outputFileTracingExcludes: {
     "/api/compile": ["./node_modules/@node-latex-compiler/**"],

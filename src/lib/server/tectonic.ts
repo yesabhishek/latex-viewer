@@ -3,7 +3,7 @@ import "server-only";
 import { execFile } from "node:child_process";
 import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { cp, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -31,9 +31,32 @@ let warmupQueue: Promise<unknown> = Promise.resolve();
 
 // Serverless file systems are read-only outside /tmp, so the cache lives there.
 const isServerless = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
-const compilerEnv = isServerless
-  ? { ...process.env, HOME: tmpdir(), XDG_CACHE_HOME: path.join(tmpdir(), "tectonic-cache") }
-  : process.env;
+const runtimeCacheDir = path.join(tmpdir(), "tectonic-cache");
+const compilerEnv = isServerless ? { ...process.env, HOME: tmpdir(), XDG_CACHE_HOME: runtimeCacheDir } : process.env;
+
+// scripts/warm-tectonic-cache.mjs ships a cache with the function. Copying it into /tmp on cold
+// start skips most package downloads and the LaTeX format build.
+let cacheSeed: Promise<void> | null = null;
+
+function seedCompilerCache() {
+  cacheSeed ??= (async () => {
+    if (!isServerless || existsSync(runtimeCacheDir)) {
+      return;
+    }
+    const bundled = [path.join(process.cwd(), "node_modules", ".cache", "tectonic"), "/var/task/node_modules/.cache/tectonic"].find(
+      (dir) => existsSync(/*turbopackIgnore: true*/ dir),
+    );
+    if (!bundled) {
+      return;
+    }
+    const startedAt = performance.now();
+    await cp(/*turbopackIgnore: true*/ bundled, runtimeCacheDir, { recursive: true });
+    console.log(`Seeded Tectonic cache from ${bundled} in ${Math.round(performance.now() - startedAt)} ms`);
+  })().catch((error: unknown) => {
+    console.warn("Could not seed the Tectonic cache; packages will download on demand.", error);
+  });
+  return cacheSeed;
+}
 
 export async function compileLatex(source: string): Promise<CompileResult> {
   if (!source.trim()) {
@@ -93,6 +116,8 @@ async function runCompile(compilerSource: string): Promise<CompileResult> {
   if (!tectonicPath) {
     return { ok: false, status: 500, error: "Tectonic compiler binary is not available." };
   }
+
+  await seedCompilerCache();
 
   const jobDir = await mkdtemp(path.join(tmpdir(), "latex-viewer-"));
   const texPath = path.join(jobDir, "document.tex");
