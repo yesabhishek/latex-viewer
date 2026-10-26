@@ -8,6 +8,7 @@ import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
 import path from "node:path";
 
+import { findUnsafeFileAccess } from "./guard";
 import { normalizeSourceForCompiler } from "./shims";
 
 const MAX_SOURCE_BYTES = 512 * 1024;
@@ -32,7 +33,18 @@ let warmupQueue: Promise<unknown> = Promise.resolve();
 // Serverless file systems are read-only outside /tmp, so the cache lives there.
 const isServerless = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
 const runtimeCacheDir = path.join(tmpdir(), "tectonic-cache");
-const compilerEnv = isServerless ? { ...process.env, HOME: tmpdir(), XDG_CACHE_HOME: runtimeCacheDir } : process.env;
+// The compiler only gets the variables it needs, so project secrets in process.env never reach
+// the process that handles untrusted LaTeX.
+const compilerEnv: NodeJS.ProcessEnv = {
+  NODE_ENV: process.env.NODE_ENV,
+  PATH: process.env.PATH,
+  LANG: process.env.LANG,
+  TMPDIR: process.env.TMPDIR,
+  TZ: process.env.TZ,
+  HOME: isServerless ? tmpdir() : process.env.HOME,
+  ...(isServerless ? { XDG_CACHE_HOME: runtimeCacheDir } : { XDG_CACHE_HOME: process.env.XDG_CACHE_HOME }),
+  ...(process.env.HTTPS_PROXY ? { HTTPS_PROXY: process.env.HTTPS_PROXY } : {}),
+};
 
 // scripts/warm-tectonic-cache.mjs ships a cache with the function. Copying it into /tmp on cold
 // start skips most package downloads and the LaTeX format build.
@@ -67,6 +79,11 @@ export async function compileLatex(source: string): Promise<CompileResult> {
 
   if (Buffer.byteLength(compilerSource, "utf8") > MAX_SOURCE_BYTES) {
     return { ok: false, status: 413, error: "LaTeX source is larger than the 512 KB limit." };
+  }
+
+  const unsafe = findUnsafeFileAccess(compilerSource);
+  if (unsafe) {
+    return { ok: false, status: 400, error: unsafe };
   }
 
   const key = createHash("sha256").update(compilerSource).digest("hex");
