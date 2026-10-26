@@ -16,7 +16,7 @@
     "nextjs"
   ],
   "engines": {
-    "node": ">=20.9.0"
+    "node": "24.x"
   },
   "scripts": {
     "dev": "next dev",
@@ -35,9 +35,9 @@
     "@codemirror/state": "^6.7.6",
     "@codemirror/view": "^6.43.15",
     "@lezer/highlight": "^1.2.5",
-    "geist": "^1.8.1",
+    "geist": "^1.8.2",
     "lucide-react": "^1.61.0",
-    "next": "^16.4.2",
+    "next": "^16.4.3",
     "node-latex-compiler": "^1.0.5",
     "pdfjs-dist": "^6.4.299",
     "react": "^19.3.1",
@@ -49,7 +49,7 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "eslint": "^9.39.5",
-    "eslint-config-next": "^16.4.2",
+    "eslint-config-next": "^16.4.3",
     "typescript": "^6.0.3"
   }
 }
